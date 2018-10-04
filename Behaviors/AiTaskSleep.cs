@@ -9,12 +9,12 @@ namespace BehaviorsLib
         {
         }
 
-        public float minDayLight;
+        public bool isNocturnal = true;
 
         public override void LoadConfig(JsonObject taskConfig, JsonObject aiConfig)
         {
-            if (taskConfig["mindaylight"] != null){
-                minDayLight = taskConfig["mindaylight"].AsFloat();
+            if (taskConfig["isnocturnal"] != null){
+                isNocturnal = taskConfig["isnocturnal"].AsBool(true);
             }
 
             base.LoadConfig(taskConfig, aiConfig);
@@ -22,19 +22,19 @@ namespace BehaviorsLib
 
         public override bool ShouldExecute()
         {
-            if (entity.World.Calendar.DayLightStrength < minDayLight) return false;
-            return true;
+            if (isNocturnal && entity.World.Calendar.DayLightStrength > 0.50f || !isNocturnal && entity.World.Calendar.DayLightStrength < 0.50f) return true;
+            return false;
         }
 
         public override void StartExecute()
         {
-            base.StartExecute();        
+            base.StartExecute();
         }
 
         public override bool ContinueExecute(float dt)
         {
-            if (entity.World.Calendar.DayLightStrength < minDayLight) return false;
-            return true;
+            if (isNocturnal && entity.World.Calendar.DayLightStrength > 0.50f || !isNocturnal && entity.World.Calendar.DayLightStrength < 0.50f) return true;
+            return false;
         }
         
     }
